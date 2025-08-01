@@ -1,3 +1,4 @@
+import 'package:card_scanner/card_scanner.dart';
 import 'package:flutter/material.dart';
 import 'package:get/instance_manager.dart';
 import 'package:last_exam/controller/my_controller.dart';
@@ -53,11 +54,11 @@ class _AddCardScreenState extends State<AddCardScreen> {
                 ),
                 IconButton(
                     onPressed: () async {
-                      // var cardDetails = await CardScanner.scanCard();
-                      // if (cardDetails != null) {
-                      //   print('Card number: ${cardDetails.cardNumber}');
-                      //   print('Expiry: ${cardDetails.expiryDate}');
-                      // }
+                      var cardDetails = await CardScanner.scanCard();
+                      if (cardDetails != null) {
+                        print('Card number: ${cardDetails.cardNumber}');
+                        print('Expiry: ${cardDetails.expiryDate}');
+                      }
                     },
                     icon: Icon(Icons.camera))
               ],
