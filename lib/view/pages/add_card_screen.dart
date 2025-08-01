@@ -1,7 +1,9 @@
+import 'package:card_scanner/card_scanner.dart';
 import 'package:flutter/material.dart';
 import 'package:get/instance_manager.dart';
 import 'package:last_exam/controller/my_controller.dart';
 import 'package:last_exam/model/card_model.dart';
+import 'package:last_exam/view/pages/sacnner.dart';
 
 class AddCardScreen extends StatefulWidget {
   const AddCardScreen({super.key});
@@ -55,9 +57,11 @@ class _AddCardScreenState extends State<AddCardScreen> {
                     onPressed: () async {
                       // var cardDetails = await CardScanner.scanCard();
                       // if (cardDetails != null) {
+                      //   numberController.text = cardDetails.cardNumber;
                       //   print('Card number: ${cardDetails.cardNumber}');
                       //   print('Expiry: ${cardDetails.expiryDate}');
                       // }
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => CardScannerPage()));
                     },
                     icon: Icon(Icons.camera))
               ],

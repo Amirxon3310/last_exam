@@ -7,7 +7,7 @@ import 'package:last_exam/view/widgets/w_card.dart';
 class HomeScreen extends StatelessWidget {
   HomeScreen({super.key});
 
-  final cardController = Get.put(MyController()); // ✅
+  final cardController = Get.put(MyController());
 
   @override
   Widget build(BuildContext context) {
