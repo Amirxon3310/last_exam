@@ -1,11 +1,12 @@
-import 'package:card_scanner/card_scanner.dart';
 import 'package:flutter/material.dart';
 import 'package:get/instance_manager.dart';
 import 'package:last_exam/controller/my_controller.dart';
 import 'package:last_exam/model/card_model.dart';
+import 'package:last_exam/view/pages/sacnner.dart';
 
 class AddCardScreen extends StatefulWidget {
-  const AddCardScreen({super.key});
+  final String? cardNumber;
+  const AddCardScreen({super.key, this.cardNumber});
 
   @override
   State<AddCardScreen> createState() => _AddCardScreenState();
@@ -53,14 +54,34 @@ class _AddCardScreenState extends State<AddCardScreen> {
                   ),
                 ),
                 IconButton(
-                    onPressed: () async {
-                      var cardDetails = await CardScanner.scanCard();
-                      if (cardDetails != null) {
-                        print('Card number: ${cardDetails.cardNumber}');
-                        print('Expiry: ${cardDetails.expiryDate}');
+                  onPressed: () async {
+                    final scannedResult = await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => CardScannerPage(),
+                      ),
+                    );
+
+                    if (scannedResult != null && scannedResult is String) {
+                      RegExp cardNumberRegex =
+                          RegExp(r'\b(?:\d[ -]*?){13,19}\b');
+                      RegExp dateRegex = RegExp(r'(0[1-9]|1[0-2])\/\d{2}');
+
+                      final numberMatch =
+                          cardNumberRegex.firstMatch(scannedResult);
+                      final dateMatch = dateRegex.firstMatch(scannedResult);
+
+                      if (numberMatch != null) {
+                        numberController.text =
+                            numberMatch.group(0)!.replaceAll(' ', '');
                       }
-                    },
-                    icon: Icon(Icons.camera))
+                      if (dateMatch != null) {
+                        dateController.text = dateMatch.group(0)!;
+                      }
+                    }
+                  },
+                  icon: Icon(Icons.camera),
+                ),
               ],
             ),
             SizedBox(height: 20),
@@ -86,12 +107,26 @@ class _AddCardScreenState extends State<AddCardScreen> {
               controller: dateController,
             ),
 
+            //!
+            buildLabel("Card type"),
+            buildTextField(
+              hintText: "A Debit",
+              controller: typeController,
+            ),
+
+            //!
+            buildLabel("Bank name"),
+            buildTextField(
+              hintText: "Visa",
+              controller: bankController,
+            ),
+
             SizedBox(height: 30),
             ElevatedButton(
               onPressed: () {
                 myController.addCard(
                   CardModel(
-                    bank: balanceController.text,
+                    bank: bankController.text,
                     date: dateController.text,
                     name: nameController.text,
                     number: numberController.text,

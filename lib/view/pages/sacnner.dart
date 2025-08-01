@@ -1,15 +1,16 @@
-import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class CardScannerPage extends StatefulWidget {
+  const CardScannerPage({super.key});
+
   @override
-  _CardScannerPageState createState() => _CardScannerPageState();
+  CardScannerPageState createState() => CardScannerPageState();
 }
 
-class _CardScannerPageState extends State<CardScannerPage> {
+class CardScannerPageState extends State<CardScannerPage> {
   late CameraController _cameraController;
   bool _isCameraInitialized = false;
   String scannedText = "";
@@ -21,7 +22,6 @@ class _CardScannerPageState extends State<CardScannerPage> {
   }
 
   Future<void> _initCamera() async {
-    // Kamera permission so‘ralmoqda
     var status = await Permission.camera.request();
 
     if (status.isGranted) {
@@ -35,7 +35,6 @@ class _CardScannerPageState extends State<CardScannerPage> {
         _isCameraInitialized = true;
       });
     } else {
-      // Agar permission rad etilsa
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Kameraga ruxsat berilmadi")),
       );
@@ -56,11 +55,8 @@ class _CardScannerPageState extends State<CardScannerPage> {
       }
     }
 
-    setState(() {
-      scannedText = result;
-    });
-
     textRecognizer.close();
+    Navigator.pop(context, result);
   }
 
   @override
@@ -75,24 +71,26 @@ class _CardScannerPageState extends State<CardScannerPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text("Card Scanner")),
-      body: Column(
-        children: [
-          _isCameraInitialized
-              ? AspectRatio(
-            aspectRatio: _cameraController.value.aspectRatio,
-            child: CameraPreview(_cameraController),
-          )
-              : Center(child: CircularProgressIndicator()),
-          ElevatedButton(
-            onPressed: _isCameraInitialized ? _captureAndRecognize : null,
-            child: Text("Rasmga olish va o'qish"),
-          ),
-          Expanded(
-            child: SingleChildScrollView(
-              child: Text(scannedText),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            _isCameraInitialized
+                ? SizedBox(
+                    width: double.infinity,
+                    height: 500,
+                    child: AspectRatio(
+                      aspectRatio: _cameraController.value.aspectRatio,
+                      child: CameraPreview(_cameraController),
+                    ),
+                  )
+                : Center(child: CircularProgressIndicator()),
+            ElevatedButton(
+              onPressed: _isCameraInitialized ? _captureAndRecognize : null,
+              child: Text("Rasmga olish va o'qish"),
             ),
-          ),
-        ],
+            Text(scannedText),
+          ],
+        ),
       ),
     );
   }
